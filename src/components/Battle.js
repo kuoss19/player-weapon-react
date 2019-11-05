@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Player from './Player';
 
@@ -15,25 +14,33 @@ const BattleContainer = styled.div`
 `;
 
 class Battle extends React.Component {
-  static propTypes = {
-    firstPlayer: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      power: PropTypes.number.isRequired,
-      hp: PropTypes.number.isRequired
-    }).isRequired,
-    secondPlayer: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      power: PropTypes.number.isRequired,
-      hp: PropTypes.number.isRequired
-    }).isRequired
+  attack = async player => {
+    const { name, power, weapon } = player;
+    const { firstPlayer, secondPlayer, setStatus, addMessages } = this.props;
+    const target = firstPlayer.name === name ? secondPlayer : firstPlayer;
+    target.hp -= power;
+
+    await addMessages({
+      text: `${name}이(가) ${target.name}을(를) ${weapon}(으)로 공격했습니다!`
+    });
+
+    if (target.hp <= 0) {
+      await addMessages({
+        text: `${target.name}이(가) 사망하였습니다!`,
+        emphasize: true,
+        color: 'red'
+      });
+      setStatus('PLAYER_DIED');
+    }
   };
 
   render() {
+    const { firstPlayer, secondPlayer } = this.props;
     return (
       <BattleWrapper>
         <BattleContainer>
-          <Player {...this.props.firstPlayer} />
-          <Player {...this.props.secondPlayer} />
+          <Player {...firstPlayer} attack={this.attack} />
+          <Player {...secondPlayer} attack={this.attack} />
         </BattleContainer>
       </BattleWrapper>
     );

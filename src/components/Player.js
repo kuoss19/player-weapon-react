@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import PlayerAction from './PlayerAction';
 
@@ -11,12 +10,6 @@ const PlayerWrapper = styled.div`
 `;
 
 class Player extends React.Component {
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    power: PropTypes.number.isRequired,
-    hp: PropTypes.number.isRequired
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -31,13 +24,14 @@ class Player extends React.Component {
   };
 
   handleAttack = event => {
-    event.preventDefault();
-    // TODO: 실제로 공격해서 애새끼들 체력 깎기
-    // TODO: 로그띄우기
+    const { attack, name } = this.props;
+    const { weapon, power } = this.state;
+    attack({ name, weapon, power });
   };
 
   render() {
-    const { name, power, hp } = this.props;
+    const { name, hp } = this.props;
+    const { power } = this.state;
 
     return (
       <PlayerWrapper>

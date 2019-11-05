@@ -33,7 +33,7 @@ class App extends React.Component {
     this.secondPlayer = new Player({ name: '영희', power: 20 });
 
     this.state = {
-      status: 'INITIAL',
+      status: 'BATTLE_IN_PROGRESS',
       messages: [
         {
           text: `${this.firstPlayer.name} 와(과) ${this.secondPlayer.name} 이(가) 입장했습니다!`
@@ -42,32 +42,42 @@ class App extends React.Component {
     };
   }
 
-  addMessages = message => {
+  addMessages = async message => {
     const { messages } = this.state;
+    console.log(message);
     this.setState({ messages: [...messages, message] });
   };
 
-  render() {
-    const { status, messages } = this.state;
+  setStatus = newStatus => {
+    this.setState({ status: newStatus });
+  };
 
+  render() {
+    const { messages } = this.state;
     return (
       <div className="App">
         <AppStyle />
         <Header />
         <Battle
+          setStatus={this.setStatus}
           firstPlayer={this.firstPlayer}
           secondPlayer={this.secondPlayer}
+          addMessages={this.addMessages}
         />
         <Console messages={messages} />
       </div>
     );
   }
 
-  componentDidUpdate(_prevProps, prevState) {
+  async componentDidUpdate(_prevProps, prevState) {
     const { status: prevStatus } = prevState;
     const { status } = this.state;
     if (status !== prevStatus && status === 'PLAYER_DIED') {
-      // TODO: 사람이 뒤졌습니다 메시지
+      await this.addMessages({
+        text: '배틀이 종료되었습니다',
+        emphasize: true,
+        color: 'blue'
+      });
     }
   }
 }
