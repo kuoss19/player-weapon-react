@@ -13,10 +13,14 @@ const BattleContainer = styled.div`
   justify-content: center;
 `;
 
-class Battle extends React.Component {
-  attack = async player => {
+export default function Battle({
+  firstPlayer,
+  secondPlayer,
+  setStatus,
+  addMessages
+}) {
+  async function attack(player) {
     const { name, power, weapon } = player;
-    const { firstPlayer, secondPlayer, setStatus, addMessages } = this.props;
     const target = firstPlayer.name === name ? secondPlayer : firstPlayer;
     target.hp -= power;
 
@@ -32,19 +36,14 @@ class Battle extends React.Component {
       });
       setStatus('PLAYER_DIED');
     }
-  };
-
-  render() {
-    const { firstPlayer, secondPlayer } = this.props;
-    return (
-      <BattleWrapper>
-        <BattleContainer>
-          <Player {...firstPlayer} attack={this.attack} />
-          <Player {...secondPlayer} attack={this.attack} />
-        </BattleContainer>
-      </BattleWrapper>
-    );
   }
-}
 
-export default Battle;
+  return (
+    <BattleWrapper>
+      <BattleContainer>
+        <Player {...firstPlayer} attack={attack} />
+        <Player {...secondPlayer} attack={attack} />
+      </BattleContainer>
+    </BattleWrapper>
+  );
+}
