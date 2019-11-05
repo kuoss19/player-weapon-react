@@ -44,7 +44,6 @@ class App extends React.Component {
 
   addMessages = async message => {
     const { messages } = this.state;
-    console.log(message);
     this.setState({ messages: [...messages, message] });
   };
 
